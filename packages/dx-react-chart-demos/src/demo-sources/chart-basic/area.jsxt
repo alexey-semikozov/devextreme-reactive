@@ -2,9 +2,19 @@ import * as React from 'react';<%&additionalImports%>
 import {
   Chart,
   AreaSeries,
+  LineSeries,
 } from '@devexpress/dx-react-chart-<%&themeName%>';
 
 import { born as data } from '../../../demo-data/data-vizualization';
+
+const Series = ({type, ...restProps}) => {
+  switch(type) {
+    case 'line':
+    return <LineSeries {...restProps} valueField="ru" />
+    case 'area':
+    return <AreaSeries {...restProps} valueField="ch" />
+  }
+}
 
 export default class Demo extends React.PureComponent {
   constructor(props) {
@@ -12,29 +22,31 @@ export default class Demo extends React.PureComponent {
 
     this.state = {
       data,
+      type: 'area'
     };
+    this.changeType = this.changeType.bind(this);
+  }
+  changeType(event) {
+    this.setState({type: event.target.value});
   }
   render() {
-    const { data: chartData } = this.state;
+    const { data: chartData, type } = this.state;
 
     return (
       <<%&wrapperTag%>>
         <Chart
           data={chartData}
         >
-          <AreaSeries
+          <Series
             valueField="ru"
             argumentField="year"
-          />
-          <AreaSeries
-            valueField="ch"
-            argumentField="year"
-          />
-          <AreaSeries
-            valueField="us"
-            argumentField="year"
+            type={type}
           />
         </Chart>
+        <select style={{width: '50%', margin: 'auto'}} onChange={this.changeType}>
+          <option value="area">area</option>
+          <option value="line">line</option>
+        </select>
       </<%&wrapperTag%>>
     );
   }
